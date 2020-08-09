@@ -1,0 +1,15 @@
+[Unit]
+Description=Doorbot for my apartment
+Requires=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/aos/doorbot
+User=root
+Group=root
+Restart=always
+RestartSec=10
+ExecStart=/usr/bin/python3 bot.py
+
+[Install]
+WantedBy=multi-user.target
