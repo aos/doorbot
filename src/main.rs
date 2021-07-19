@@ -9,9 +9,10 @@ use rppal::pwm::{Channel, Polarity, Pwm};
 const GPIO_LED: u8 = 23;
 
 const PERIOD_MS: u64 = 20;
-const PULSE_MIN_US: u64 = 1200;
+const PULSE_MIN_US: u64 = 800;
 const PULSE_NEUTRAL_US: u64 = 1500;
-const PULSE_MAX_US: u64 = 1800;
+const PULSE_MAX_US: u64 = 2300;
+const HOLD_DURATION: Duration = Duration::from_secs(3);
 
 fn main() -> Result<(), Box<dyn Error>> {
     println!("Working with {}", DeviceInfo::new()?.model());
@@ -24,26 +25,18 @@ fn main() -> Result<(), Box<dyn Error>> {
         Polarity::Normal,
         true,
     )?;
+    println!("Pulsed max 1");
+    blink(&mut pin, HOLD_DURATION);
 
-    thread::sleep(Duration::from_millis(500));
-
-    blink(&mut pin);
     pwm.set_pulse_width(Duration::from_micros(PULSE_MIN_US))?;
-
-    thread::sleep(Duration::from_millis(500));
-
-
-    for pulse in (PULSE_MIN_US..=PULSE_NEUTRAL_US).step_by(10) {
-        pwm.set_pulse_width(Duration::from_micros(pulse))?;
-        thread::sleep(Duration::from_millis(20));
-        blink(&mut pin);
-    }
+    println!("Pulsed min 2");
+    blink(&mut pin, Duration::from_millis(500));
 
     Ok(())
 }
 
-fn blink(pin: &mut OutputPin) {
+fn blink(pin: &mut OutputPin, hold: Duration) {
     pin.set_high();
-    thread::sleep(Duration::from_millis(100));
+    thread::sleep(hold);
     pin.set_low();
 }
