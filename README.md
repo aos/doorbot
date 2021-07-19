@@ -21,3 +21,11 @@ building door. It is operated via a `bottle.py` web application.
     ```
     - Note: sudo is required here to access the `/dev/mem` device.
 3. Point browser to IP address of the Pi. Press button to operate motor.
+
+### Rust version
+
+```
+cargo build --target=arm-unknown-linux-gnueabihf
+scp target/arm-unknown-linux-gnueabihf/debug/doorbot pi@192.168.20.254:
+ssh -t pi@192.168.20.254 ./doorbot
+```
