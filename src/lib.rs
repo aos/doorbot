@@ -23,11 +23,11 @@ pub fn open_door(hold: Duration) -> Result<(), Box<dyn Error>> {
         Polarity::Normal,
         true,
     )?;
-    println!("Pulsed max 1");
+    println!("Holding door open for... {:?}", hold);
     blink(&mut pin, hold);
 
     pwm.set_pulse_width(Duration::from_micros(PULSE_MIN_US))?;
-    println!("Pulsed min 2");
+    println!("Resetting...");
     blink(&mut pin, Duration::from_millis(500));
 
     Ok(())

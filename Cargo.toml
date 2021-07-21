@@ -7,3 +7,4 @@ edition = "2018"
 
 [dependencies]
 rppal = "0.12.0"
+rouille = "3.2.1"
