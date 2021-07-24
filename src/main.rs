@@ -2,16 +2,20 @@ use std::time::Duration;
 use std::io;
 
 use rouille::router;
+use rppal::system::DeviceInfo;
 
 use doorbot::open_door;
 
-const PORT: &str = "8000";
+const DEFAULT_PORT: &str = "8000";
 const HOLD_DURATION: Duration = Duration::from_secs(5);
 
 fn main() {
-    println!("Now listening on 0.0.0.0:{}", PORT);
+    println!("Working with {}", DeviceInfo::new().expect("device not found").model());
 
-    rouille::start_server(format!("0.0.0.0:{}", PORT), move |request| {
+    let port = std::env::var("PORT").unwrap_or(DEFAULT_PORT.into());
+    println!("Now listening on 0.0.0.0:{}", port);
+
+    rouille::start_server(format!("0.0.0.0:{}", port), move |request| {
         rouille::log(&request, io::stdout(), || {
             router!(request,
                 (GET) (/) => {

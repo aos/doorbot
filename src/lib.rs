@@ -3,7 +3,6 @@ use std::thread;
 use std::time::Duration;
 
 use rppal::gpio::{Gpio, OutputPin};
-use rppal::system::DeviceInfo;
 use rppal::pwm::{Channel, Polarity, Pwm};
 
 const GPIO_LED: u8 = 23;
@@ -13,8 +12,6 @@ const PULSE_MIN_US: u64 = 800;
 const PULSE_MAX_US: u64 = 2300;
 
 pub fn open_door(hold: Duration) -> Result<(), Box<dyn Error>> {
-    println!("Working with {}", DeviceInfo::new()?.model());
-
     let mut pin = Gpio::new()?.get(GPIO_LED)?.into_output();
     let pwm = Pwm::with_period(
         Channel::Pwm0,
