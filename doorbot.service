@@ -4,12 +4,13 @@ Requires=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/home/aos/doorbot
 User=root
 Group=root
 Restart=always
 RestartSec=10
-ExecStart=/usr/bin/python3 bot.py
+
+Environment="PORT=80"
+ExecStart=./home/pi/doorbot
 
 [Install]
 WantedBy=multi-user.target
