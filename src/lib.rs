@@ -12,7 +12,8 @@ const PULSE_MIN_US: u64 = 800;
 const PULSE_MAX_US: u64 = 2300;
 
 pub fn open_door(hold: Duration) -> Result<(), Box<dyn Error>> {
-    let mut pin = Gpio::new()?.get(GPIO_LED)?.into_output();
+    let mut led = Gpio::new()?.get(GPIO_LED)?.into_output();
+
     let pwm = Pwm::with_period(
         Channel::Pwm0,
         Duration::from_millis(PERIOD_MS),
@@ -20,12 +21,13 @@ pub fn open_door(hold: Duration) -> Result<(), Box<dyn Error>> {
         Polarity::Normal,
         true,
     )?;
+
     println!("Holding door open for... {:?}", hold);
-    blink(&mut pin, hold);
+    blink(&mut led, hold);
 
     pwm.set_pulse_width(Duration::from_micros(PULSE_MIN_US))?;
     println!("Resetting...");
-    blink(&mut pin, Duration::from_millis(500));
+    blink(&mut led, Duration::from_millis(500));
 
     Ok(())
 }

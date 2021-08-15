@@ -35,3 +35,14 @@ cargo build --target=arm-unknown-linux-gnueabihf
 scp target/arm-unknown-linux-gnueabihf/debug/doorbot pi@192.168.20.254:
 ssh -t pi@192.168.20.254 ./doorbot
 ```
+
+### Activating PWM
+
+Since we're using hardware PWM, we need to activate it in the device tree. SSH
+into the Pi, and run the following command:
+
+```
+echo "dtoverlay=pwm" | sudo tee -a /boot/config.txt
+```
+
+Then reboot! PWM should now appear in sysfs under: `/sys/class/pwm/pwmchip0`.
