@@ -1,16 +1,54 @@
-use std::time::Duration;
 use std::io;
 
 use rouille::router;
 use rppal::system::DeviceInfo;
 
-use doorbot::open_door;
+use std::error::Error;
+use std::thread;
+use std::time::Duration;
+
+use rppal::gpio::{Gpio, OutputPin};
+use rppal::pwm::{Channel, Polarity, Pwm};
+
+const STATUS_LED: u8 = 23;
+const OPEN_LED: u8 = 23;
+const RESET_LED: u8 = 23;
+
+const PERIOD_MS: u64 = 20;
+const PULSE_MIN_US: u64 = 800;
+const PULSE_MAX_US: u64 = 2300;
 
 const DEFAULT_PORT: &str = "8000";
 const HOLD_DURATION: Duration = Duration::from_secs(5);
 
+pub struct LedPins {
+    status: OutputPin,
+    open: OutputPin,
+    reset: OutputPin,
+}
+
+impl LedPins {
+    fn new(status_num: u8, open_num: u8, reset_num: u8) -> Result<LedPins, Box<dyn Error>> {
+        Ok(LedPins {
+            status: Gpio::new()?.get(status_num)?.into_output(),
+            open: Gpio::new()?.get(open_num)?.into_output(),
+            reset: Gpio::new()?.get(reset_num)?.into_output(),
+        })
+    }
+
+}
+
 fn main() {
     println!("Working with {}", DeviceInfo::new().expect("device not found").model());
+    let pwm = Pwm::with_period(
+        Channel::Pwm0,
+        Duration::from_millis(PERIOD_MS),
+        Duration::from_micros(PULSE_MAX_US),
+        Polarity::Normal,
+        true,
+    ).expect("set PWM");
+    let led_pins = LedPins::new(STATUS_LED, OPEN_LED, RESET_LED).expect("led pins");
+
 
     let port = std::env::var("PORT").unwrap_or(DEFAULT_PORT.into());
     println!("Now listening on 0.0.0.0:{}", port);
@@ -22,7 +60,7 @@ fn main() {
                     rouille::Response::html(INDEX)
                 },
                 (GET) (/sesame) => {
-                    match open_door(HOLD_DURATION) {
+                    match pwm.set_pulse_width(Duration::from_micros(PULSE_MIN_US)) {
                         Ok(_) => rouille::Response::html(INDEX),
                         Err(e) => rouille::Response::html(format!("{}\n{}", INDEX, e)),
                     }
@@ -31,6 +69,21 @@ fn main() {
             )
         })
     });
+}
+
+pub fn open_door(pins: LedPins, hold: Duration) -> Result<(), Box<dyn Error>> {
+    println!("Holding door open for... {:?}", hold);
+    thread::sleep(hold);
+
+    println!("Resetting...");
+
+    Ok(())
+}
+
+fn blink(pin: &mut OutputPin, hold: Duration) {
+    pin.set_high();
+    thread::sleep(hold);
+    pin.set_low();
 }
 
 const INDEX: &str = r#"
