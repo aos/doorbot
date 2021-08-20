@@ -7,10 +7,10 @@ Type=simple
 User=root
 Group=root
 Restart=always
-RestartSec=10
+RestartSec=5
 
 Environment="PORT=80"
-ExecStart=./home/pi/doorbot
+ExecStart=/home/door/doorbot
 
 [Install]
 WantedBy=multi-user.target

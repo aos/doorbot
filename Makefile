@@ -1,7 +1,7 @@
 .PHONY: all build copy run
 
 TARGET=arm-unknown-linux-gnueabi
-REMOTE_HOST=aos@almaz.lan
+REMOTE_HOST=door@almaz.lan
 
 all: build-release copy-release run
 
@@ -20,4 +20,4 @@ copy-release:
 	scp target/${TARGET}/release/doorbot ${REMOTE_HOST}:
 
 run:
-	ssh -t ${REMOTE_HOST} PORT=9000 RUST_BACKTRACE=1 ./doorbot
+	ssh -t ${REMOTE_HOST} PORT=9000 ./doorbot
