@@ -11,9 +11,9 @@ use std::time::Duration;
 use rppal::gpio::{Gpio, OutputPin};
 use rppal::pwm::{Channel, Polarity, Pwm};
 
-const STATUS_LED: u8 = 17;
+const STATUS_LED: u8 = 15;
 const OPEN_LED: u8 = 23;
-const ERR_LED: u8 = 4;
+const ERR_LED: u8 = 14;
 
 const PERIOD_MS: u64 = 20;
 const PULSE_MIN_US: u64 = 800;

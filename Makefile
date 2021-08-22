@@ -1,7 +1,7 @@
 .PHONY: all build copy run
 
 TARGET=arm-unknown-linux-gnueabi
-REMOTE_HOST=door@almaz.lan
+REMOTE_HOST=door@192.168.20.17
 
 all: build-release copy-release run
 
